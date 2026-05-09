@@ -1,20 +1,20 @@
 <!DOCTYPE html>
-<html lang=„pt“>
+<html lang="pt">
 <head>
-<meta charset=„UTF-8“/>
-<meta name=„viewport“ content=„width=device-width, initial-scale=1.0, user-scalable=no“/>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
 <title>Training Log</title>
-<link href=„https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Syne:wght@700;800&display=swap“ rel=„stylesheet“/>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Syne:wght@700;800&display=swap" rel="stylesheet"/>
 <style>
   *{box-sizing:border-box;margin:0;padding:0;}
   :root{--bg:#0d0d0d;--bg2:#0a0a0a;--bg3:#141414;--border:#1e1e1e;--border2:#2a2a2a;--text:#e8e0d0;--muted:#555;--accent:#c8f044;--accent-bg:#c8f04415;--accent-border:#c8f04440;}
-  body{font-family:’IBM Plex Mono’,monospace;background:var(--bg);color:var(--text);min-height:100vh;}
+  body{font-family:'IBM Plex Mono',monospace;background:var(--bg);color:var(--text);min-height:100vh;}
   input{background:var(--bg3);border:1px solid var(--border2);color:var(--text);padding:8px 12px;font-family:inherit;font-size:13px;border-radius:4px;outline:none;width:100%;}
   input:focus{border-color:var(--accent);}
   button{cursor:pointer;font-family:inherit;border:none;outline:none;}
   #header{background:var(--bg2);border-bottom:1px solid var(--border);padding:14px 18px;}
   #header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
-  #logo{font-family:’Syne’,sans-serif;font-size:20px;font-weight:800;letter-spacing:-0.02em;}
+  #logo{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;letter-spacing:-0.02em;}
   #logo span{color:var(--accent);}
   #meta{font-size:10px;color:var(--muted);margin-top:2px;}
   #sync-btn{background:var(--accent);color:#000;font-size:11px;font-weight:700;padding:8px 14px;border-radius:6px;white-space:nowrap;}
@@ -63,89 +63,89 @@
 </style>
 </head>
 <body>
-<div id=„header“>
-  <div id=„header-top“>
+<div id="header">
+  <div id="header-top">
     <div>
-      <div id=„logo“>TRAINING<span>LOG</span></div>
-      <div id=„meta“>0 atletas · 0 sessões</div>
+      <div id="logo">TRAINING<span>LOG</span></div>
+      <div id="meta">0 atletas · 0 sessões</div>
     </div>
-    <button id=„sync-btn“ onclick=„document.getElementById(‚ics-file‘).click()“>📥 Importar .ics</button>
-    <input type=„file“ id=„ics-file“ accept=„.ics“ style=„display:none“ onchange=„handleICSFile(event)“/>
+    <button id="sync-btn" onclick="document.getElementById('ics-file').click()">📥 Importar .ics</button>
+    <input type="file" id="ics-file" accept=".ics" style="display:none" onchange="handleICSFile(event)"/>
   </div>
-  <div id=„ics-msg“></div>
-  <div id=„nav“>
-    <button class=„nav-btn active“ onclick=„setView(‚today‘)“>Hoje</button>
-    <button class=„nav-btn“ onclick=„setView(‚history‘)“>Histórico</button>
-    <button class=„nav-btn“ onclick=„setView(‚athletes‘)“>Atletas</button>
+  <div id="ics-msg"></div>
+  <div id="nav">
+    <button class="nav-btn active" onclick="setView('today')">Hoje</button>
+    <button class="nav-btn" onclick="setView('history')">Histórico</button>
+    <button class="nav-btn" onclick="setView('athletes')">Atletas</button>
   </div>
 </div>
 
-<div id=„app“>
-  <div id=„view-today“ class=„view active“>
-    <div id=„date-bar“>
-      <input type=„date“ id=„date-input“ onchange=„onDateChange()“/>
-      <span id=„date-label“></span>
-      <span id=„today-badge“ class=„today-badge“ style=„display:none“>HOJE</span>
+<div id="app">
+  <div id="view-today" class="view active">
+    <div id="date-bar">
+      <input type="date" id="date-input" onchange="onDateChange()"/>
+      <span id="date-label"></span>
+      <span id="today-badge" class="today-badge" style="display:none">HOJE</span>
     </div>
-    <div id=„ath-rows“></div>
-    <div id=„summary-box“>
-      <div class=„sum-title“>RESUMO DO DIA</div>
-      <div id=„summary-content“></div>
+    <div id="ath-rows"></div>
+    <div id="summary-box">
+      <div class="sum-title">RESUMO DO DIA</div>
+      <div id="summary-content"></div>
     </div>
   </div>
-  <div id=„view-history“ class=„view“>
-    <div class=„section-label“>HISTÓRICO DE SESSÕES</div>
-    <div id=„hist-list“></div>
+  <div id="view-history" class="view">
+    <div class="section-label">HISTÓRICO DE SESSÕES</div>
+    <div id="hist-list"></div>
   </div>
-  <div id=„view-athletes“ class=„view“>
-    <div id=„add-row“>
-      <input id=„new-name“ placeholder=„Adicionar atleta manualmente...“ onkeydown=„if(event.key===‚Enter‘)addAthlete()“/>
-      <button id=„add-btn“ onclick=„addAthlete()“>+</button>
+  <div id="view-athletes" class="view">
+    <div id="add-row">
+      <input id="new-name" placeholder="Adicionar atleta manualmente..." onkeydown="if(event.key==='Enter')addAthlete()"/>
+      <button id="add-btn" onclick="addAthlete()">+</button>
     </div>
-    <input id=„search-ath“ placeholder=„Pesquisar...“ oninput=„renderAthletesList()“ style=„margin-bottom:12px“/>
-    <div id=„ath-list-meta“ class=„section-label“></div>
-    <div id=„ath-list“></div>
+    <input id="search-ath" placeholder="Pesquisar..." oninput="renderAthletesList()" style="margin-bottom:12px"/>
+    <div id="ath-list-meta" class="section-label"></div>
+    <div id="ath-list"></div>
   </div>
 </div>
 
 <script>
 const WORKOUT_TYPES = [
-  {key:“upper“,    label:“Upper Body“, short:“UPPER“},
-  {key:“legs“,     label:“Legs“,       short:“LEGS“},
-  {key:“chest“,    label:“Chest“,      short:“CHEST“},
-  {key:“back“,     label:“Back“,       short:“BACK“},
-  {key:“biceps“,   label:“Biceps“,     short:“BIC“},
-  {key:“triceps“,  label:“Triceps“,    short:“TRI“},
-  {key:“shoulders“,label:“Shoulders“,  short:“SHL“},
-  {key:“abs“,      label:“Abs“,        short:“ABS“},
-  {key:“cardio“,   label:“Cardio“,     short:“CARD“},
-  {key:“fb“,       label:“Full Body“,  short:“FB“},
-  {key:“push“,     label:“Push“,       short:“PUSH“},
-  {key:“pull“,     label:“Pull“,       short:“PULL“},
-  {key:“lco“,      label:“Lower/Core“, short:“L/CO“},
+  {key:"upper",    label:"Upper Body", short:"UPPER"},
+  {key:"legs",     label:"Legs",       short:"LEGS"},
+  {key:"chest",    label:"Chest",      short:"CHEST"},
+  {key:"back",     label:"Back",       short:"BACK"},
+  {key:"biceps",   label:"Biceps",     short:"BIC"},
+  {key:"triceps",  label:"Triceps",    short:"TRI"},
+  {key:"shoulders",label:"Shoulders",  short:"SHL"},
+  {key:"abs",      label:"Abs",        short:"ABS"},
+  {key:"cardio",   label:"Cardio",     short:"CARD"},
+  {key:"fb",       label:"Full Body",  short:"FB"},
+  {key:"push",     label:"Push",       short:"PUSH"},
+  {key:"pull",     label:"Pull",       short:"PULL"},
+  {key:"lco",      label:"Lower/Core", short:"L/CO"},
 ];
 
 function load(k,def){try{const v=localStorage.getItem(k);return v?JSON.parse(v):def;}catch{return def;}}
 function save(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
 
-let athletes    = load(„tl4_athletes“, []);
-let sessions    = load(„tl4_sessions“, {});
-let dayPresence = load(„tl4_presence“, {});
-let selectedDate = new Date().toISOString().split(„T“)[0];
+let athletes    = load("tl4_athletes", []);
+let sessions    = load("tl4_sessions", {});
+let dayPresence = load("tl4_presence", {});
+let selectedDate = new Date().toISOString().split("T")[0];
 
-function todayStr(){ return new Date().toISOString().split(„T“)[0]; }
+function todayStr(){ return new Date().toISOString().split("T")[0]; }
 
 function displayDate(str){
-  try{const[y,m,d]=str.split(„-„).map(Number);return new Date(y,m-1,d).toLocaleDateString(„pt-PT“,{weekday:“long“,day:“2-digit“,month:“2-digit“,year:“numeric“});}
+  try{const[y,m,d]=str.split("-").map(Number);return new Date(y,m-1,d).toLocaleDateString("pt-PT",{weekday:"long",day:"2-digit",month:"2-digit",year:"numeric"});}
   catch{return str;}
 }
 
 function cleanName(raw){
-  return raw.replace(/^pt\s+/i,““).replace(/\r/g,““).replace(/\\r/g,““).replace(/&amp;/g,“&“).trim();
+  return raw.replace(/^pt\s+/i,"").replace(/\r/g,"").replace(/\\r/g,"").replace(/&amp;/g,"&").trim();
 }
 
 function getInitials(name){
-  return name.split(/[\s&]+/).filter(Boolean).map(w=>w[0]).join(„“).slice(0,3).toUpperCase();
+  return name.split(/[\s&]+/).filter(Boolean).map(w=>w[0]).join("").slice(0,3).toUpperCase();
 }
 
 function findOrCreateAthlete(name){
@@ -158,17 +158,17 @@ function getDayAthletes(date){
   const entries = dayPresence[date]||[];
   return entries
     .sort((a,b)=>{
-      const ta = typeof a===„object“ ? a.time : „000000“;
-      const tb = typeof b===„object“ ? b.time : „000000“;
+      const ta = typeof a==="object" ? a.time : "000000";
+      const tb = typeof b==="object" ? b.time : "000000";
       return ta.localeCompare(tb);
     })
-    .map(e=>athletes.find(a=>a.id===(typeof e===„object“?e.id:e)))
+    .map(e=>athletes.find(a=>a.id===(typeof e==="object"?e.id:e)))
     .filter(Boolean);
 }
 
 function getSummary(athleteId,date){
   const s=sessions[date]?.[athleteId]||{};
-  return WORKOUT_TYPES.filter(w=>s[w.key]).map(w=>w.short).join(„ / „)||null;
+  return WORKOUT_TYPES.filter(w=>s[w.key]).map(w=>w.short).join(" / ")||null;
 }
 
 function getDatesWithData(){
@@ -181,14 +181,14 @@ function toggleWorkout(athleteId,wkey){
   if(!sessions[selectedDate]) sessions[selectedDate]={};
   if(!sessions[selectedDate][athleteId]) sessions[selectedDate][athleteId]={};
   sessions[selectedDate][athleteId][wkey]=!sessions[selectedDate][athleteId][wkey];
-  save(„tl4_sessions“,sessions);
+  save("tl4_sessions",sessions);
   renderToday();
 }
 
 // ── DATE UTILS ──
-function dateStrToObj(str){ const[y,m,d]=str.split(„-„).map(Number); return new Date(y,m-1,d); }
-function dateObjToStr(d){ return d.getFullYear()+“-„+String(d.getMonth()+1).padStart(2,“0“)+“-„+String(d.getDate()).padStart(2,“0“); }
-function icsDateToStr(s){ return s.slice(0,4)+“-„+s.slice(4,6)+“-„+s.slice(6,8); }
+function dateStrToObj(str){ const[y,m,d]=str.split("-").map(Number); return new Date(y,m-1,d); }
+function dateObjToStr(d){ return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
+function icsDateToStr(s){ return s.slice(0,4)+"-"+s.slice(4,6)+"-"+s.slice(6,8); }
 
 // Parse UNTIL date from RRULE
 function parseUntil(until){
@@ -224,11 +224,11 @@ function expandRecurrence(dtstart, rrule, exdates, overrideDates){
 
   // For weekly, get allowed weekdays (0=Sun)
   let allowedDays = null;
-  if(freq===„WEEKLY“){
+  if(freq==="WEEKLY"){
     const bydayMatch = rrule.match(/BYDAY=([^;]+)/);
     if(bydayMatch){
       const dayMap={SU:0,MO:1,TU:2,WE:3,TH:4,FR:5,SA:6};
-      allowedDays = new Set(bydayMatch[1].split(„,“).map(d=>dayMap[d.trim().toUpperCase()]).filter(d=>d!==undefined));
+      allowedDays = new Set(bydayMatch[1].split(",").map(d=>dayMap[d.trim().toUpperCase()]).filter(d=>d!==undefined));
     }
   }
 
@@ -245,9 +245,9 @@ function expandRecurrence(dtstart, rrule, exdates, overrideDates){
       count++;
     }
     // Advance
-    if(freq===„DAILY“) cur.setDate(cur.getDate()+interval);
-    else if(freq===„WEEKLY“) cur.setDate(cur.getDate()+7*interval);
-    else if(freq===„MONTHLY“) cur.setMonth(cur.getMonth()+interval);
+    if(freq==="DAILY") cur.setDate(cur.getDate()+interval);
+    else if(freq==="WEEKLY") cur.setDate(cur.getDate()+7*interval);
+    else if(freq==="MONTHLY") cur.setMonth(cur.getMonth()+interval);
     else break;
   }
   return dates;
@@ -256,8 +256,8 @@ function expandRecurrence(dtstart, rrule, exdates, overrideDates){
 // ── PARSE & PROCESS ICS ──
 function processICSText(text){
   // Unfold lines
-  const unfolded = text.replace(/\r?\n[ \t]/g,““);
-  const blocks = unfolded.split(„BEGIN:VEVENT“).slice(1);
+  const unfolded = text.replace(/\r?\n[ \t]/g,"");
+  const blocks = unfolded.split("BEGIN:VEVENT").slice(1);
 
   const newPres = JSON.parse(JSON.stringify(dayPresence));
   let eventCount = 0;
@@ -275,7 +275,7 @@ function processICSText(text){
     // EXDATEs
     const exMatches = [...block.matchAll(/^EXDATE[^:]*:(.+)$/mg)];
     exMatches.forEach(m=>{
-      const vals = m[1].trim().split(„,“);
+      const vals = m[1].trim().split(",");
       vals.forEach(v=>{ const dm=v.match(/(\d{8})/); if(dm){ if(!uidExdates[uid]) uidExdates[uid]=new Set(); uidExdates[uid].add(icsDateToStr(dm[1])); }});
     });
 
@@ -321,7 +321,7 @@ function processICSText(text){
 
     // Extract time (HHMMSS) from DTSTART for sorting
     const timeM = block.match(/^DTSTART[^:]*:(\d{8}T(\d{6}))/m);
-    const timeStr = timeM ? timeM[2] : „000000“;
+    const timeStr = timeM ? timeM[2] : "000000";
 
     datesToAdd.forEach(date=>{
       if(!newPres[date]) newPres[date]=[];
@@ -338,8 +338,8 @@ function processICSText(text){
   });
 
   dayPresence = newPres;
-  save(„tl4_presence“, dayPresence);
-  save(„tl4_athletes“, athletes);
+  save("tl4_presence", dayPresence);
+  save("tl4_athletes", athletes);
   updateMeta();
   renderToday();
   return {eventCount, athleteCount};
@@ -348,143 +348,143 @@ function processICSText(text){
 function handleICSFile(e){
   const file=e.target.files[0];
   if(!file) return;
-  showMsg(„⏳ A processar calendário...“);
+  showMsg("⏳ A processar calendário...");
   const reader=new FileReader();
   reader.onload=ev=>{
     // Reset presence to reimport clean
     dayPresence={};
     athletes=[];
-    save(„tl4_athletes“,[]);
-    save(„tl4_presence“,{});
+    save("tl4_athletes",[]);
+    save("tl4_presence",{});
     const {eventCount,athleteCount}=processICSText(ev.target.result);
-    showMsg(„✓ „+athleteCount+“ atletas · „+eventCount+“ sessões importadas“,5000);
+    showMsg("✓ "+athleteCount+" atletas · "+eventCount+" sessões importadas",5000);
   };
   reader.readAsText(file);
-  e.target.value=„“;
+  e.target.value="";
 }
 
 function showMsg(text,timeout){
-  const el=document.getElementById(„ics-msg“);
-  el.textContent=text; el.style.display=„block“;
-  if(timeout) setTimeout(()=>el.style.display=„none“,timeout);
+  const el=document.getElementById("ics-msg");
+  el.textContent=text; el.style.display="block";
+  if(timeout) setTimeout(()=>el.style.display="none",timeout);
 }
 
 function updateMeta(){
   const totalDays = Object.keys(dayPresence).filter(d=>(dayPresence[d]||[]).length>0).length;
-  document.getElementById(„meta“).textContent=athletes.length+“ atletas · „+totalDays+“ dias“;
+  document.getElementById("meta").textContent=athletes.length+" atletas · "+totalDays+" dias";
 }
 
 // ── RENDER TODAY ──
 function renderToday(){
   const today=todayStr();
-  document.getElementById(„date-input“).value=selectedDate;
-  document.getElementById(„date-label“).textContent=displayDate(selectedDate);
-  document.getElementById(„today-badge“).style.display=selectedDate===today?“inline“:“none“;
+  document.getElementById("date-input").value=selectedDate;
+  document.getElementById("date-label").textContent=displayDate(selectedDate);
+  document.getElementById("today-badge").style.display=selectedDate===today?"inline":"none";
   updateMeta();
 
   const dayAths=getDayAthletes(selectedDate);
-  const rows=document.getElementById(„ath-rows“);
-  rows.innerHTML=„“;
+  const rows=document.getElementById("ath-rows");
+  rows.innerHTML="";
 
   if(!dayAths.length){
-    rows.innerHTML=‚<div style=„text-align:center;padding:40px 0;color:#333;font-size:13px“>Nenhum treino para este dia.<br/><span style=„font-size:11px;color:#222“>Toca em 📥 Importar .ics para carregar o calendário.</span></div>‘;
+    rows.innerHTML='<div style="text-align:center;padding:40px 0;color:#333;font-size:13px">Nenhum treino para este dia.<br/><span style="font-size:11px;color:#222">Toca em 📥 Importar .ics para carregar o calendário.</span></div>';
   } else {
     dayAths.forEach(a=>{
       const ath=sessions[selectedDate]?.[a.id]||{};
       const done=WORKOUT_TYPES.filter(w=>ath[w.key]);
-      const row=document.createElement(„div“);
-      row.className=„ath-row“;
-      const labelClass=done.length?“ath-label done“:“ath-label“;
-      const doneTags=done.length?`<span class=„ath-done-tags“>${done.map(w=>w.short).join(„ · „)}</span>`:““;
+      const row=document.createElement("div");
+      row.className="ath-row";
+      const labelClass=done.length?"ath-label done":"ath-label";
+      const doneTags=done.length?`<span class="ath-done-tags">${done.map(w=>w.short).join(" · ")}</span>`:"";
       const btns=WORKOUT_TYPES.map(wt=>{
-        const on=ath[wt.key]?“on“:““;
-        const check=ath[wt.key]?`<svg width=„10“ height=„10“ viewBox=„0 0 12 12“><polyline points=„2,6 5,9 10,3“ stroke=„#000“ stroke-width=„2.2“ fill=„none“ stroke-linecap=„round“ stroke-linejoin=„round“/></svg>`:““;
-        return `<button class=„wbtn ${on}“ onclick=„toggleWorkout(${a.id},’${wt.key}’)“><div class=„cb“>${check}</div><span class=„wl“>${wt.label}</span></button>`;
-      }).join(„“);
-      row.innerHTML=`<div class=„ath-avatar“>${getInitials(a.name)}</div><div style=„flex:1“><div style=„display:flex;align-items:center;flex-wrap:wrap;gap:4px;margin-bottom:7px“><span class=„${labelClass}“>${a.name}</span>${doneTags}</div><div class=„workouts-wrap“>${btns}</div></div>`;
+        const on=ath[wt.key]?"on":"";
+        const check=ath[wt.key]?`<svg width="10" height="10" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3" stroke="#000" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`:"";
+        return `<button class="wbtn ${on}" onclick="toggleWorkout(${a.id},'${wt.key}')"><div class="cb">${check}</div><span class="wl">${wt.label}</span></button>`;
+      }).join("");
+      row.innerHTML=`<div class="ath-avatar">${getInitials(a.name)}</div><div style="flex:1"><div style="display:flex;align-items:center;flex-wrap:wrap;gap:4px;margin-bottom:7px"><span class="${labelClass}">${a.name}</span>${doneTags}</div><div class="workouts-wrap">${btns}</div></div>`;
       rows.appendChild(row);
     });
   }
 
-  const sc=document.getElementById(„summary-content“);
-  sc.innerHTML=„“;
+  const sc=document.getElementById("summary-content");
+  sc.innerHTML="";
   const hasDone=dayAths.some(a=>getSummary(a.id,selectedDate));
   if(!hasDone){
-    sc.innerHTML=‚<div class=„empty-msg“>Nenhum treino registado ainda.</div>‘;
+    sc.innerHTML='<div class="empty-msg">Nenhum treino registado ainda.</div>';
   } else {
     dayAths.forEach(a=>{
       const s=getSummary(a.id,selectedDate);
-      if(s) sc.innerHTML+=`<div class=„sum-row“><span class=„sum-name“>${a.name}</span><span class=„sum-dash“>–</span><span class=„sum-data“>${s}</span></div>`;
+      if(s) sc.innerHTML+=`<div class="sum-row"><span class="sum-name">${a.name}</span><span class="sum-dash">–</span><span class="sum-data">${s}</span></div>`;
     });
   }
 }
 
 // ── RENDER HISTORY ──
 function renderHistory(){
-  const list=document.getElementById(„hist-list“);
-  list.innerHTML=„“;
+  const list=document.getElementById("hist-list");
+  list.innerHTML="";
   const dates=getDatesWithData();
-  if(!dates.length){list.innerHTML=‚<div style=„text-align:center;padding:40px 0;color:#333;font-size:13px“>Sem sessões registadas.</div>‘;return;}
+  if(!dates.length){list.innerHTML='<div style="text-align:center;padding:40px 0;color:#333;font-size:13px">Sem sessões registadas.</div>';return;}
   dates.forEach(d=>{
-    let rows=„“;
+    let rows="";
     getDayAthletes(d).forEach(a=>{
       const s=getSummary(a.id,d);
-      if(s) rows+=`<div class=„sum-row“><span class=„sum-name“>${a.name}</span><span class=„sum-dash“>–</span><span class=„sum-data“>${s}</span></div>`;
+      if(s) rows+=`<div class="sum-row"><span class="sum-name">${a.name}</span><span class="sum-dash">–</span><span class="sum-data">${s}</span></div>`;
     });
     if(!rows) return;
-    const card=document.createElement(„div“);
-    card.className=„hist-card“;
-    card.innerHTML=`<div class=„hist-head“><span class=„hist-date“>${displayDate(d)}</span><button class=„hist-edit“ onclick=„goToDate(‚${d}‘)“>Editar</button></div><div class=„hist-body“>${rows}</div>`;
+    const card=document.createElement("div");
+    card.className="hist-card";
+    card.innerHTML=`<div class="hist-head"><span class="hist-date">${displayDate(d)}</span><button class="hist-edit" onclick="goToDate('${d}')">Editar</button></div><div class="hist-body">${rows}</div>`;
     list.appendChild(card);
   });
 }
 
-function goToDate(d){selectedDate=d;setView(„today“);}
+function goToDate(d){selectedDate=d;setView("today");}
 
 // ── RENDER ATHLETES ──
 function renderAthletesList(){
-  const q=(document.getElementById(„search-ath“).value||““).toLowerCase();
+  const q=(document.getElementById("search-ath").value||"").toLowerCase();
   const filtered=athletes.filter(a=>a.name.toLowerCase().includes(q));
-  document.getElementById(„ath-list-meta“).textContent=filtered.length+“ atletas“;
-  const list=document.getElementById(„ath-list“);
-  list.innerHTML=„“;
+  document.getElementById("ath-list-meta").textContent=filtered.length+" atletas";
+  const list=document.getElementById("ath-list");
+  list.innerHTML="";
   filtered.forEach(a=>{
     const count=getDatesWithData().filter(d=>Object.values(sessions[d]?.[a.id]||{}).some(Boolean)).length;
-    const row=document.createElement(„div“);
-    row.className=„ath-list-row“;
-    row.innerHTML=`<div class=„ath-list-av“>${getInitials(a.name)}</div><div style=„flex:1;font-size:13px“>${a.name}</div><div style=„font-size:10px;color:var(--muted);margin-right:8px“>${count} sessões</div><button class=„ath-del“ onclick=„removeAthlete(${a.id})“>×</button>`;
+    const row=document.createElement("div");
+    row.className="ath-list-row";
+    row.innerHTML=`<div class="ath-list-av">${getInitials(a.name)}</div><div style="flex:1;font-size:13px">${a.name}</div><div style="font-size:10px;color:var(--muted);margin-right:8px">${count} sessões</div><button class="ath-del" onclick="removeAthlete(${a.id})">×</button>`;
     list.appendChild(row);
   });
 }
 
 function addAthlete(){
-  const name=document.getElementById(„new-name“).value.trim();
+  const name=document.getElementById("new-name").value.trim();
   if(!name||athletes.find(a=>a.name.toLowerCase()===name.toLowerCase())) return;
   athletes.push({id:Date.now(),name});
-  save(„tl4_athletes“,athletes);
-  document.getElementById(„new-name“).value=„“;
+  save("tl4_athletes",athletes);
+  document.getElementById("new-name").value="";
   renderAthletesList(); updateMeta();
 }
 
 function removeAthlete(id){
-  if(!confirm(„Remover atleta?“)) return;
+  if(!confirm("Remover atleta?")) return;
   athletes=athletes.filter(a=>a.id!==id);
-  save(„tl4_athletes“,athletes);
+  save("tl4_athletes",athletes);
   renderAthletesList(); renderToday();
 }
 
 function setView(v){
-  document.querySelectorAll(„.view“).forEach(el=>el.classList.remove(„active“));
-  document.querySelectorAll(„.nav-btn“).forEach(el=>el.classList.remove(„active“));
-  document.getElementById(„view-„+v).classList.add(„active“);
-  document.querySelectorAll(„.nav-btn“)[[„today“,“history“,“athletes“].indexOf(v)].classList.add(„active“);
-  if(v===„history“) renderHistory();
-  else if(v===„athletes“) renderAthletesList();
+  document.querySelectorAll(".view").forEach(el=>el.classList.remove("active"));
+  document.querySelectorAll(".nav-btn").forEach(el=>el.classList.remove("active"));
+  document.getElementById("view-"+v).classList.add("active");
+  document.querySelectorAll(".nav-btn")[["today","history","athletes"].indexOf(v)].classList.add("active");
+  if(v==="history") renderHistory();
+  else if(v==="athletes") renderAthletesList();
   else renderToday();
 }
 
 function onDateChange(){
-  selectedDate=document.getElementById(„date-input“).value;
+  selectedDate=document.getElementById("date-input").value;
   renderToday();
 }
 
