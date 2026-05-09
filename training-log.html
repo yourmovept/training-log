@@ -268,7 +268,6 @@ async function saveSessionToDB(athleteName, date){
     const workouts=sessions[date]?.[athleteName]||[];
     await sbFetch("training_log", {
       method:"POST",
-      prefer:"resolution=merge-duplicates",
       headers:{"Prefer":"resolution=merge-duplicates,return=minimal"},
       body:JSON.stringify({athlete_name:athleteName, session_date:date, workouts, updated_at:new Date().toISOString()})
     });
