@@ -17,17 +17,27 @@
   #logo{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;letter-spacing:-0.02em;}
   #logo span{color:var(--accent);}
   #meta{font-size:10px;color:var(--muted);margin-top:2px;}
-  #sync-btn{background:var(--accent);color:#000;font-size:11px;font-weight:700;padding:8px 14px;border-radius:6px;white-space:nowrap;}
+  .hbtn{background:var(--bg3);color:var(--muted);font-size:11px;font-weight:600;padding:7px 12px;border-radius:5px;border:1px solid var(--border2);white-space:nowrap;}
+  .hbtn:hover{border-color:var(--accent);color:var(--accent);}
+  .hbtn.primary{background:var(--accent);color:#000;border-color:var(--accent);}
+  #header-btns{display:flex;gap:8px;}
   #nav{display:flex;}
   .nav-btn{background:none;color:var(--muted);font-size:11px;padding:8px 14px;letter-spacing:0.1em;text-transform:uppercase;border-bottom:2px solid transparent;transition:all 0.15s;}
   .nav-btn.active{color:var(--accent);border-bottom-color:var(--accent);}
-  #ics-msg{display:none;margin-top:10px;background:var(--accent-bg);border:1px solid var(--accent-border);color:var(--accent);font-size:12px;padding:8px 14px;border-radius:6px;}
+  #msg{display:none;margin-top:10px;font-size:12px;padding:8px 14px;border-radius:6px;}
+  #msg.ok{background:var(--accent-bg);border:1px solid var(--accent-border);color:var(--accent);}
+  #msg.err{background:#e0505015;border:1px solid #e0505040;color:#e05050;}
   #app{padding:16px 18px;max-width:700px;margin:0 auto;}
   .view{display:none;}.view.active{display:block;}
   #date-bar{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
   #date-input{width:auto;color:var(--accent);background:var(--bg2);border:1px solid var(--border2);border-radius:6px;padding:7px 10px;}
   #date-label{font-size:12px;color:var(--muted);flex:1;}
   .today-badge{font-size:10px;padding:2px 8px;background:var(--accent-bg);color:var(--accent);border-radius:3px;border:1px solid var(--accent-border);}
+  .sync-indicator{font-size:10px;color:var(--muted);display:flex;align-items:center;gap:4px;}
+  .sync-dot{width:6px;height:6px;border-radius:50%;background:var(--muted);}
+  .sync-dot.ok{background:#4ade80;}
+  .sync-dot.saving{background:#facc15;animation:pulse 1s infinite;}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
   .ath-row{display:flex;align-items:flex-start;gap:10px;padding:12px 0;border-bottom:1px solid #181818;}
   .ath-avatar{width:36px;height:36px;background:#1a2210;border:1px solid #c8f04430;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:var(--accent);flex-shrink:0;margin-top:2px;}
   .ath-label{font-size:13px;font-weight:600;color:var(--muted);margin-bottom:7px;}
@@ -60,23 +70,41 @@
   .ath-del{background:none;color:#333;font-size:16px;padding:4px 8px;border:1px solid var(--border2);border-radius:3px;}
   .ath-del:hover{color:#e05050;border-color:#e05050;}
   .section-label{font-size:10px;color:var(--muted);letter-spacing:0.1em;margin-bottom:12px;}
+  .stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:14px 16px;margin-bottom:10px;}
+  .stat-name{font-size:13px;font-weight:600;color:var(--text);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+  .stat-count{font-size:11px;color:var(--accent);background:var(--accent-bg);border:1px solid var(--accent-border);padding:2px 8px;border-radius:3px;}
+  .stat-bar-row{display:flex;align-items:center;gap:8px;margin-bottom:5px;}
+  .stat-bar-label{font-size:10px;color:var(--muted);width:55px;flex-shrink:0;text-align:right;}
+  .stat-bar-wrap{flex:1;background:#1a1a1a;border-radius:2px;height:8px;overflow:hidden;}
+  .stat-bar-fill{height:100%;background:var(--accent);border-radius:2px;transition:width 0.4s;}
+  .stat-bar-val{font-size:10px;color:var(--muted);width:20px;flex-shrink:0;}inset:0;background:#0d0d0d;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;z-index:100;}
+  #loading .spin{width:32px;height:32px;border:3px solid #1e1e1e;border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  #loading p{font-size:12px;color:var(--muted);}
 </style>
 </head>
 <body>
+
+<div id="loading"><div class="spin"></div><p>A carregar...</p></div>
+
 <div id="header">
   <div id="header-top">
     <div>
       <div id="logo">TRAINING<span>LOG</span></div>
-      <div id="meta">0 atletas · 0 sessões</div>
+      <div id="meta">0 atletas · 0 dias</div>
     </div>
-    <button id="sync-btn" onclick="document.getElementById('ics-file').click()">📥 Importar .ics</button>
+    <div id="header-btns">
+      <button class="hbtn" onclick="document.getElementById('ics-file').click()">📥 .ics</button>
+      <button class="hbtn primary" onclick="syncFromDB()">☁️ Sync</button>
+    </div>
     <input type="file" id="ics-file" accept=".ics" style="display:none" onchange="handleICSFile(event)"/>
   </div>
-  <div id="ics-msg"></div>
+  <div id="msg"></div>
   <div id="nav">
     <button class="nav-btn active" onclick="setView('today')">Hoje</button>
     <button class="nav-btn" onclick="setView('history')">Histórico</button>
     <button class="nav-btn" onclick="setView('athletes')">Atletas</button>
+    <button class="nav-btn" onclick="setView('stats')">Stats</button>
   </div>
 </div>
 
@@ -86,6 +114,7 @@
       <input type="date" id="date-input" onchange="onDateChange()"/>
       <span id="date-label"></span>
       <span id="today-badge" class="today-badge" style="display:none">HOJE</span>
+      <div class="sync-indicator"><div class="sync-dot" id="sync-dot"></div><span id="sync-status">—</span></div>
     </div>
     <div id="ath-rows"></div>
     <div id="summary-box">
@@ -93,11 +122,23 @@
       <div id="summary-content"></div>
     </div>
   </div>
+
   <div id="view-history" class="view">
     <div class="section-label">HISTÓRICO DE SESSÕES</div>
     <div id="hist-list"></div>
   </div>
-  <div id="view-athletes" class="view">
+
+  <div id="view-stats" class="view">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+      <select id="stats-period" onchange="renderStats()" style="width:auto;color:var(--accent);background:var(--bg2);border:1px solid var(--border2);border-radius:6px;padding:7px 10px;">
+        <option value="week">Esta semana</option>
+        <option value="month" selected>Este mês</option>
+        <option value="all">Tudo</option>
+      </select>
+      <span id="stats-period-label" style="font-size:11px;color:var(--muted);flex:1;"></span>
+    </div>
+    <div id="stats-content"></div>
+  </div>
     <div id="add-row">
       <input id="new-name" placeholder="Adicionar atleta manualmente..." onkeydown="if(event.key==='Enter')addAthlete()"/>
       <button id="add-btn" onclick="addAthlete()">+</button>
@@ -109,6 +150,26 @@
 </div>
 
 <script>
+// ── SUPABASE CONFIG ──
+const SB_URL = "https://lapqwapoezijirxxqfbv.supabase.co";
+const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxhcHF3YXBvZXppamlyeHhxZmJ2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgyNjAxOTEsImV4cCI6MjA5MzgzNjE5MX0.b4zZ3gn70TgakGfMl9iMc5gTPGfMQoP_1yxnSkOYDvU";
+
+async function sbFetch(path, opts={}){
+  const res = await fetch(SB_URL+"/rest/v1/"+path, {
+    ...opts,
+    headers: {
+      "apikey": SB_KEY,
+      "Authorization": "Bearer "+SB_KEY,
+      "Content-Type": "application/json",
+      "Prefer": opts.prefer||"",
+      ...(opts.headers||{})
+    }
+  });
+  if(!res.ok){ const t=await res.text(); throw new Error(t); }
+  const ct = res.headers.get("content-type")||"";
+  return ct.includes("json") ? res.json() : [];
+}
+
 const WORKOUT_TYPES = [
   {key:"upper",    label:"Upper Body", short:"UPPER"},
   {key:"legs",     label:"Legs",       short:"LEGS"},
@@ -128,10 +189,11 @@ const WORKOUT_TYPES = [
 function load(k,def){try{const v=localStorage.getItem(k);return v?JSON.parse(v):def;}catch{return def;}}
 function save(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
 
-let athletes    = load("tl4_athletes", []);
-let sessions    = load("tl4_sessions", {});
-let dayPresence = load("tl4_presence", {});
+let athletes    = load("tl5_athletes",  []);
+let sessions    = load("tl5_sessions",  {}); // {date: {athleteName: [workoutKeys]}}
+let dayPresence = load("tl5_presence",  {}); // {date: [{id,time}]}
 let selectedDate = new Date().toISOString().split("T")[0];
+let saveTimer = null;
 
 function todayStr(){ return new Date().toISOString().split("T")[0]; }
 
@@ -141,7 +203,7 @@ function displayDate(str){
 }
 
 function cleanName(raw){
-  return raw.replace(/^pt\s+/i,"").replace(/\r/g,"").replace(/\\r/g,"").replace(/&amp;/g,"&").trim();
+  return raw.replace(/^pt\s+/i,"").replace(/\r/g,"").replace(/\\r/g,"").trim();
 }
 
 function getInitials(name){
@@ -149,102 +211,129 @@ function getInitials(name){
 }
 
 function findOrCreateAthlete(name){
-  let a = athletes.find(x=>x.name.toLowerCase()===name.toLowerCase());
-  if(!a){ a={id:Date.now()+Math.floor(Math.random()*999999),name}; athletes.push(a); }
+  let a=athletes.find(x=>x.name.toLowerCase()===name.toLowerCase());
+  if(!a){a={id:Date.now()+Math.floor(Math.random()*999999),name};athletes.push(a);}
   return a;
 }
 
 function getDayAthletes(date){
-  const entries = dayPresence[date]||[];
+  const entries=dayPresence[date]||[];
   return entries
-    .sort((a,b)=>{
-      const ta = typeof a==="object" ? a.time : "000000";
-      const tb = typeof b==="object" ? b.time : "000000";
-      return ta.localeCompare(tb);
-    })
-    .map(e=>athletes.find(a=>a.id===(typeof e==="object"?e.id:e)))
+    .sort((a,b)=>(a.time||"000000").localeCompare(b.time||"000000"))
+    .map(e=>athletes.find(a=>a.id===(e.id||e)))
     .filter(Boolean);
 }
 
-function getSummary(athleteId,date){
-  const s=sessions[date]?.[athleteId]||{};
-  return WORKOUT_TYPES.filter(w=>s[w.key]).map(w=>w.short).join(" / ")||null;
+function getWorkouts(athleteName, date){
+  return sessions[date]?.[athleteName] || [];
+}
+
+function getSummary(athleteName, date){
+  const w=getWorkouts(athleteName,date);
+  return w.length ? WORKOUT_TYPES.filter(t=>w.includes(t.key)).map(t=>t.short).join(" / ") : null;
 }
 
 function getDatesWithData(){
   return Object.keys(sessions)
-    .filter(d=>Object.values(sessions[d]||{}).some(a=>Object.values(a).some(Boolean)))
+    .filter(d=>Object.values(sessions[d]||{}).some(w=>w.length>0))
     .sort((a,b)=>b.localeCompare(a));
 }
 
-function toggleWorkout(athleteId,wkey){
+// ── SYNC STATUS ──
+function setSyncStatus(state){
+  const dot=document.getElementById("sync-dot");
+  const txt=document.getElementById("sync-status");
+  if(state==="ok"){dot.className="sync-dot ok";txt.textContent="Guardado";}
+  else if(state==="saving"){dot.className="sync-dot saving";txt.textContent="A guardar...";}
+  else{dot.className="sync-dot";txt.textContent="—";}
+}
+
+// ── TOGGLE WORKOUT ──
+async function toggleWorkout(athleteName, wkey){
   if(!sessions[selectedDate]) sessions[selectedDate]={};
-  if(!sessions[selectedDate][athleteId]) sessions[selectedDate][athleteId]={};
-  sessions[selectedDate][athleteId][wkey]=!sessions[selectedDate][athleteId][wkey];
-  save("tl4_sessions",sessions);
+  if(!sessions[selectedDate][athleteName]) sessions[selectedDate][athleteName]=[];
+  const ws=sessions[selectedDate][athleteName];
+  const idx=ws.indexOf(wkey);
+  if(idx>-1) ws.splice(idx,1); else ws.push(wkey);
+  save("tl5_sessions",sessions);
   renderToday();
+  // Debounce save to Supabase
+  setSyncStatus("saving");
+  clearTimeout(saveTimer);
+  saveTimer=setTimeout(()=>saveSessionToDB(athleteName,selectedDate),800);
 }
 
-// ── DATE UTILS ──
-function dateStrToObj(str){ const[y,m,d]=str.split("-").map(Number); return new Date(y,m-1,d); }
-function dateObjToStr(d){ return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
-function icsDateToStr(s){ return s.slice(0,4)+"-"+s.slice(4,6)+"-"+s.slice(6,8); }
-
-// Parse UNTIL date from RRULE
-function parseUntil(until){
-  // UNTIL=20241231T000000Z or UNTIL=20241231
-  const m=until.match(/(\d{8})/);
-  return m ? icsDateToStr(m[1]) : null;
-}
-
-// Expand a recurring event into all its occurrence dates
-// Supports FREQ=WEEKLY and FREQ=DAILY with INTERVAL, UNTIL, COUNT
-// Also handles BYDAY for weekly
-function expandRecurrence(dtstart, rrule, exdates, overrideDates){
-  const dates = new Set();
-  const startStr = icsDateToStr(dtstart);
-  const startObj = dateStrToObj(startStr);
-
-  const freqMatch = rrule.match(/FREQ=(\w+)/);
-  if(!freqMatch) { dates.add(startStr); return dates; }
-  const freq = freqMatch[1];
-
-  const intervalMatch = rrule.match(/INTERVAL=(\d+)/);
-  const interval = intervalMatch ? parseInt(intervalMatch[1]) : 1;
-
-  const untilMatch = rrule.match(/UNTIL=([^;]+)/);
-  const untilStr = untilMatch ? parseUntil(untilMatch[1]) : null;
-  // Limit expansion to 2 years from today to avoid infinite loops
-  const today = new Date();
-  const limitDate = new Date(today.getFullYear()+1, today.getMonth(), today.getDate());
-  const until = untilStr ? new Date(Math.min(dateStrToObj(untilStr), limitDate)) : limitDate;
-
-  const countMatch = rrule.match(/COUNT=(\d+)/);
-  const maxCount = countMatch ? parseInt(countMatch[1]) : 9999;
-
-  // For weekly, get allowed weekdays (0=Sun)
-  let allowedDays = null;
-  if(freq==="WEEKLY"){
-    const bydayMatch = rrule.match(/BYDAY=([^;]+)/);
-    if(bydayMatch){
-      const dayMap={SU:0,MO:1,TU:2,WE:3,TH:4,FR:5,SA:6};
-      allowedDays = new Set(bydayMatch[1].split(",").map(d=>dayMap[d.trim().toUpperCase()]).filter(d=>d!==undefined));
-    }
+async function saveSessionToDB(athleteName, date){
+  try {
+    const workouts=sessions[date]?.[athleteName]||[];
+    await sbFetch("training_log", {
+      method:"POST",
+      prefer:"resolution=merge-duplicates",
+      headers:{"Prefer":"resolution=merge-duplicates,return=minimal"},
+      body:JSON.stringify({athlete_name:athleteName, session_date:date, workouts, updated_at:new Date().toISOString()})
+    });
+    setSyncStatus("ok");
+  } catch(e){
+    console.error("Save error:",e);
+    setSyncStatus("err");
+    showMsg("Erro ao guardar: "+e.message,"err");
   }
+}
 
-  let cur = new Date(startObj);
-  let count = 0;
-  const exSet = new Set(exdates);
-  const overSet = new Set(overrideDates);
+// ── SYNC FROM DB ──
+async function syncFromDB(){
+  showMsg("⏳ A sincronizar...","ok");
+  try {
+    const rows = await sbFetch("training_log?select=athlete_name,session_date,workouts&order=session_date.desc");
+    rows.forEach(row=>{
+      const date=row.session_date;
+      const name=row.athlete_name;
+      if(!sessions[date]) sessions[date]={};
+      sessions[date][name]=row.workouts||[];
+      // Ensure athlete exists
+      findOrCreateAthlete(name);
+    });
+    save("tl5_sessions",sessions);
+    save("tl5_athletes",athletes);
+    updateMeta();
+    renderToday();
+    showMsg("✓ Sincronizado! "+rows.length+" registos.","ok",3000);
+    setSyncStatus("ok");
+  } catch(e){
+    showMsg("Erro ao sincronizar: "+e.message,"err",5000);
+  }
+}
 
-  while(cur <= until && count < maxCount){
-    const dStr = dateObjToStr(cur);
-    const dayOk = !allowedDays || allowedDays.has(cur.getDay());
-    if(dayOk && !exSet.has(dStr) && !overSet.has(dStr)){
-      dates.add(dStr);
-      count++;
-    }
-    // Advance
+// ── ICS PROCESSING ──
+function icsDateToStr(s){return s.slice(0,4)+"-"+s.slice(4,6)+"-"+s.slice(6,8);}
+function dateObjToStr(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");}
+
+function expandRecurrence(dtstart,rrule,exdates,overrideDates){
+  const dates=new Set();
+  const startStr=icsDateToStr(dtstart);
+  const startObj=new Date(...[startStr.slice(0,4),startStr.slice(5,7)-1,startStr.slice(8,10)].map(Number));
+  const freqM=rrule.match(/FREQ=(\w+)/);
+  if(!freqM){dates.add(startStr);return dates;}
+  const freq=freqM[1];
+  const intM=rrule.match(/INTERVAL=(\d+)/);
+  const interval=intM?parseInt(intM[1]):1;
+  const untilM=rrule.match(/UNTIL=([^;]+)/);
+  const today=new Date();
+  const limitDate=new Date(today.getFullYear()+1,today.getMonth(),today.getDate());
+  let until=limitDate;
+  if(untilM){const um=untilM[1].match(/(\d{8})/);if(um){const u=new Date(um[1].slice(0,4),um[1].slice(4,6)-1,um[1].slice(6,8));until=u<limitDate?u:limitDate;}}
+  const cntM=rrule.match(/COUNT=(\d+)/);
+  const maxCount=cntM?parseInt(cntM[1]):9999;
+  let allowedDays=null;
+  if(freq==="WEEKLY"){const bdM=rrule.match(/BYDAY=([^;]+)/);if(bdM){const dm={SU:0,MO:1,TU:2,WE:3,TH:4,FR:5,SA:6};allowedDays=new Set(bdM[1].split(",").map(d=>dm[d.trim().toUpperCase()]).filter(d=>d!==undefined));}}
+  const exSet=new Set(exdates);
+  const ovSet=new Set(overrideDates);
+  let cur=new Date(startObj);
+  let count=0;
+  while(cur<=until&&count<maxCount){
+    const dStr=dateObjToStr(cur);
+    const dayOk=!allowedDays||allowedDays.has(cur.getDay());
+    if(dayOk&&!exSet.has(dStr)&&!ovSet.has(dStr)){dates.add(dStr);count++;}
     if(freq==="DAILY") cur.setDate(cur.getDate()+interval);
     else if(freq==="WEEKLY") cur.setDate(cur.getDate()+7*interval);
     else if(freq==="MONTHLY") cur.setMonth(cur.getMonth()+interval);
@@ -253,125 +342,82 @@ function expandRecurrence(dtstart, rrule, exdates, overrideDates){
   return dates;
 }
 
-// ── PARSE & PROCESS ICS ──
 function processICSText(text){
-  // Unfold lines
-  const unfolded = text.replace(/\r?\n[ \t]/g,"");
-  const blocks = unfolded.split("BEGIN:VEVENT").slice(1);
-
-  const newPres = JSON.parse(JSON.stringify(dayPresence));
-  let eventCount = 0;
-  let athleteCount = 0;
-
-  // First pass: collect all RECURRENCE-ID overrides and EXDATEs per UID
-  const uidExdates = {};    // uid -> Set of date strings excluded
-  const uidOverrides = {};  // uid -> Set of original date strings that have overrides
-
+  const unfolded=text.replace(/\r?\n[ \t]/g,"");
+  const blocks=unfolded.split("BEGIN:VEVENT").slice(1);
+  const newPres=JSON.parse(JSON.stringify(dayPresence));
+  const uidExdates={};
+  const uidOverrides={};
   blocks.forEach(block=>{
-    const uidM = block.match(/^UID:(.+)$/m);
+    const uidM=block.match(/^UID:(.+)$/m);
     if(!uidM) return;
-    const uid = uidM[1].trim();
-
-    // EXDATEs
-    const exMatches = [...block.matchAll(/^EXDATE[^:]*:(.+)$/mg)];
-    exMatches.forEach(m=>{
-      const vals = m[1].trim().split(",");
-      vals.forEach(v=>{ const dm=v.match(/(\d{8})/); if(dm){ if(!uidExdates[uid]) uidExdates[uid]=new Set(); uidExdates[uid].add(icsDateToStr(dm[1])); }});
-    });
-
-    // RECURRENCE-ID (overrides)
-    const recIdM = block.match(/^RECURRENCE-ID[^:]*:(\d{8})/m);
-    if(recIdM){ if(!uidOverrides[uid]) uidOverrides[uid]=new Set(); uidOverrides[uid].add(icsDateToStr(recIdM[1])); }
+    const uid=uidM[1].trim();
+    const exMs=[...block.matchAll(/^EXDATE[^:]*:(.+)$/mg)];
+    exMs.forEach(m=>m[1].trim().split(",").forEach(v=>{const dm=v.match(/(\d{8})/);if(dm){if(!uidExdates[uid])uidExdates[uid]=new Set();uidExdates[uid].add(icsDateToStr(dm[1]));}}));
+    const recIdM=block.match(/^RECURRENCE-ID[^:]*:(\d{8})/m);
+    if(recIdM){if(!uidOverrides[uid])uidOverrides[uid]=new Set();uidOverrides[uid].add(icsDateToStr(recIdM[1]));}
   });
-
-  // Second pass: process events
+  let eventCount=0,athleteCount=0;
   blocks.forEach(block=>{
-    const summaryM = block.match(/^SUMMARY[^:]*:(.+)$/m);
+    const summaryM=block.match(/^SUMMARY[^:]*:(.+)$/m);
     if(!summaryM) return;
-    const rawSummary = summaryM[1].trim();
+    const rawSummary=summaryM[1].trim();
     if(!/^pt\s/i.test(rawSummary)) return;
-    const name = cleanName(rawSummary);
+    const name=cleanName(rawSummary);
     if(!name) return;
-
-    const dtstartM = block.match(/^DTSTART[^:]*:(\d{8})/m);
+    const dtstartM=block.match(/^DTSTART[^:]*:(\d{8})/m);
     if(!dtstartM) return;
-    const dtstart = dtstartM[1];
-
-    const uidM = block.match(/^UID:(.+)$/m);
-    const uid = uidM ? uidM[1].trim() : null;
-
-    const rruleM = block.match(/^RRULE:(.+)$/m);
-    const isOverride = block.match(/^RECURRENCE-ID/m);
-
-    const ath = findOrCreateAthlete(name);
-    let datesToAdd = new Set();
-
-    if(isOverride){
-      // This is a modified occurrence — just add its actual DTSTART date
-      datesToAdd.add(icsDateToStr(dtstart));
-    } else if(rruleM){
-      // Recurring event — expand
-      const exdates = uid && uidExdates[uid] ? [...uidExdates[uid]] : [];
-      const overrides = uid && uidOverrides[uid] ? [...uidOverrides[uid]] : [];
-      datesToAdd = expandRecurrence(dtstart, rruleM[1], exdates, overrides);
-    } else {
-      // Single event
-      datesToAdd.add(icsDateToStr(dtstart));
-    }
-
-    // Extract time (HHMMSS) from DTSTART for sorting
-    const timeM = block.match(/^DTSTART[^:]*:(\d{8}T(\d{6}))/m);
-    const timeStr = timeM ? timeM[2] : "000000";
-
+    const dtstart=dtstartM[1];
+    const timeM=block.match(/^DTSTART[^:]*:\d{8}T(\d{6})/m);
+    const timeStr=timeM?timeM[1]:"000000";
+    const uidM=block.match(/^UID:(.+)$/m);
+    const uid=uidM?uidM[1].trim():null;
+    const rruleM=block.match(/^RRULE:(.+)$/m);
+    const isOverride=block.match(/^RECURRENCE-ID/m);
+    const ath=findOrCreateAthlete(name);
+    let datesToAdd=new Set();
+    if(isOverride){datesToAdd.add(icsDateToStr(dtstart));}
+    else if(rruleM){const ex=uid&&uidExdates[uid]?[...uidExdates[uid]]:[];const ov=uid&&uidOverrides[uid]?[...uidOverrides[uid]]:[];datesToAdd=expandRecurrence(dtstart,rruleM[1],ex,ov);}
+    else{datesToAdd.add(icsDateToStr(dtstart));}
     datesToAdd.forEach(date=>{
       if(!newPres[date]) newPres[date]=[];
-      // Store as {id, time} object for sorting, or plain id for backward compat
-      const existing = newPres[date];
-      const alreadyIn = existing.some(e=>(e.id||e)===ath.id);
-      if(!alreadyIn){
-        existing.push({id:ath.id, time:timeStr});
-        eventCount++;
-      }
-      newPres[date] = existing;
+      const alreadyIn=newPres[date].some(e=>(e.id||e)===ath.id);
+      if(!alreadyIn){newPres[date].push({id:ath.id,time:timeStr});eventCount++;}
     });
     athleteCount++;
   });
-
-  dayPresence = newPres;
-  save("tl4_presence", dayPresence);
-  save("tl4_athletes", athletes);
+  dayPresence=newPres;
+  save("tl5_presence",dayPresence);
+  save("tl5_athletes",athletes);
   updateMeta();
   renderToday();
-  return {eventCount, athleteCount};
+  return{eventCount,athleteCount};
 }
 
 function handleICSFile(e){
   const file=e.target.files[0];
   if(!file) return;
-  showMsg("⏳ A processar calendário...");
+  showMsg("⏳ A processar...","ok");
   const reader=new FileReader();
   reader.onload=ev=>{
-    // Reset presence to reimport clean
-    dayPresence={};
-    athletes=[];
-    save("tl4_athletes",[]);
-    save("tl4_presence",{});
-    const {eventCount,athleteCount}=processICSText(ev.target.result);
-    showMsg("✓ "+athleteCount+" atletas · "+eventCount+" sessões importadas",5000);
+    dayPresence={};athletes=[];
+    save("tl5_athletes",[]);save("tl5_presence",{});
+    const{eventCount,athleteCount}=processICSText(ev.target.result);
+    showMsg("✓ "+athleteCount+" atletas · "+eventCount+" sessões importadas","ok",5000);
   };
   reader.readAsText(file);
   e.target.value="";
 }
 
-function showMsg(text,timeout){
-  const el=document.getElementById("ics-msg");
-  el.textContent=text; el.style.display="block";
+function showMsg(text,type,timeout){
+  const el=document.getElementById("msg");
+  el.textContent=text;el.className=type||"ok";el.style.display="block";
   if(timeout) setTimeout(()=>el.style.display="none",timeout);
 }
 
 function updateMeta(){
-  const totalDays = Object.keys(dayPresence).filter(d=>(dayPresence[d]||[]).length>0).length;
-  document.getElementById("meta").textContent=athletes.length+" atletas · "+totalDays+" dias";
+  const days=Object.keys(dayPresence).filter(d=>(dayPresence[d]||[]).length>0).length;
+  document.getElementById("meta").textContent=athletes.length+" atletas · "+days+" dias";
 }
 
 // ── RENDER TODAY ──
@@ -381,42 +427,33 @@ function renderToday(){
   document.getElementById("date-label").textContent=displayDate(selectedDate);
   document.getElementById("today-badge").style.display=selectedDate===today?"inline":"none";
   updateMeta();
-
   const dayAths=getDayAthletes(selectedDate);
   const rows=document.getElementById("ath-rows");
   rows.innerHTML="";
-
   if(!dayAths.length){
-    rows.innerHTML='<div style="text-align:center;padding:40px 0;color:#333;font-size:13px">Nenhum treino para este dia.<br/><span style="font-size:11px;color:#222">Toca em 📥 Importar .ics para carregar o calendário.</span></div>';
+    rows.innerHTML='<div style="text-align:center;padding:40px 0;color:#333;font-size:13px">Nenhum treino para este dia.<br/><span style="font-size:11px;color:#222">Importa o .ics ou clica Sync.</span></div>';
   } else {
     dayAths.forEach(a=>{
-      const ath=sessions[selectedDate]?.[a.id]||{};
-      const done=WORKOUT_TYPES.filter(w=>ath[w.key]);
+      const ws=getWorkouts(a.name,selectedDate);
+      const done=WORKOUT_TYPES.filter(t=>ws.includes(t.key));
       const row=document.createElement("div");
       row.className="ath-row";
       const labelClass=done.length?"ath-label done":"ath-label";
       const doneTags=done.length?`<span class="ath-done-tags">${done.map(w=>w.short).join(" · ")}</span>`:"";
       const btns=WORKOUT_TYPES.map(wt=>{
-        const on=ath[wt.key]?"on":"";
-        const check=ath[wt.key]?`<svg width="10" height="10" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3" stroke="#000" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`:"";
-        return `<button class="wbtn ${on}" onclick="toggleWorkout(${a.id},'${wt.key}')"><div class="cb">${check}</div><span class="wl">${wt.label}</span></button>`;
+        const on=ws.includes(wt.key)?"on":"";
+        const check=ws.includes(wt.key)?`<svg width="10" height="10" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3" stroke="#000" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`:"";
+        return `<button class="wbtn ${on}" onclick="toggleWorkout('${a.name.replace(/'/g,"\\'")}','${wt.key}')"><div class="cb">${check}</div><span class="wl">${wt.label}</span></button>`;
       }).join("");
       row.innerHTML=`<div class="ath-avatar">${getInitials(a.name)}</div><div style="flex:1"><div style="display:flex;align-items:center;flex-wrap:wrap;gap:4px;margin-bottom:7px"><span class="${labelClass}">${a.name}</span>${doneTags}</div><div class="workouts-wrap">${btns}</div></div>`;
       rows.appendChild(row);
     });
   }
-
   const sc=document.getElementById("summary-content");
   sc.innerHTML="";
-  const hasDone=dayAths.some(a=>getSummary(a.id,selectedDate));
-  if(!hasDone){
-    sc.innerHTML='<div class="empty-msg">Nenhum treino registado ainda.</div>';
-  } else {
-    dayAths.forEach(a=>{
-      const s=getSummary(a.id,selectedDate);
-      if(s) sc.innerHTML+=`<div class="sum-row"><span class="sum-name">${a.name}</span><span class="sum-dash">–</span><span class="sum-data">${s}</span></div>`;
-    });
-  }
+  const hasDone=dayAths.some(a=>getSummary(a.name,selectedDate));
+  if(!hasDone){sc.innerHTML='<div class="empty-msg">Nenhum treino registado ainda.</div>';}
+  else{dayAths.forEach(a=>{const s=getSummary(a.name,selectedDate);if(s)sc.innerHTML+=`<div class="sum-row"><span class="sum-name">${a.name}</span><span class="sum-dash">–</span><span class="sum-data">${s}</span></div>`;});}
 }
 
 // ── RENDER HISTORY ──
@@ -427,10 +464,7 @@ function renderHistory(){
   if(!dates.length){list.innerHTML='<div style="text-align:center;padding:40px 0;color:#333;font-size:13px">Sem sessões registadas.</div>';return;}
   dates.forEach(d=>{
     let rows="";
-    getDayAthletes(d).forEach(a=>{
-      const s=getSummary(a.id,d);
-      if(s) rows+=`<div class="sum-row"><span class="sum-name">${a.name}</span><span class="sum-dash">–</span><span class="sum-data">${s}</span></div>`;
-    });
+    getDayAthletes(d).forEach(a=>{const s=getSummary(a.name,d);if(s)rows+=`<div class="sum-row"><span class="sum-name">${a.name}</span><span class="sum-dash">–</span><span class="sum-data">${s}</span></div>`;});
     if(!rows) return;
     const card=document.createElement("div");
     card.className="hist-card";
@@ -449,7 +483,7 @@ function renderAthletesList(){
   const list=document.getElementById("ath-list");
   list.innerHTML="";
   filtered.forEach(a=>{
-    const count=getDatesWithData().filter(d=>Object.values(sessions[d]?.[a.id]||{}).some(Boolean)).length;
+    const count=getDatesWithData().filter(d=>getWorkouts(a.name,d).length>0).length;
     const row=document.createElement("div");
     row.className="ath-list-row";
     row.innerHTML=`<div class="ath-list-av">${getInitials(a.name)}</div><div style="flex:1;font-size:13px">${a.name}</div><div style="font-size:10px;color:var(--muted);margin-right:8px">${count} sessões</div><button class="ath-del" onclick="removeAthlete(${a.id})">×</button>`;
@@ -461,25 +495,106 @@ function addAthlete(){
   const name=document.getElementById("new-name").value.trim();
   if(!name||athletes.find(a=>a.name.toLowerCase()===name.toLowerCase())) return;
   athletes.push({id:Date.now(),name});
-  save("tl4_athletes",athletes);
+  save("tl5_athletes",athletes);
   document.getElementById("new-name").value="";
-  renderAthletesList(); updateMeta();
+  renderAthletesList();updateMeta();
 }
 
 function removeAthlete(id){
   if(!confirm("Remover atleta?")) return;
   athletes=athletes.filter(a=>a.id!==id);
-  save("tl4_athletes",athletes);
-  renderAthletesList(); renderToday();
+  save("tl5_athletes",athletes);
+  renderAthletesList();renderToday();
 }
 
+// ── RENDER STATS ──
+function renderStats(){
+  const period = document.getElementById("stats-period").value;
+  const now = new Date();
+  let startDate, label;
+
+  if(period === "week"){
+    const day = now.getDay();
+    const diff = now.getDate() - day + (day===0?-6:1);
+    startDate = new Date(now.setDate(diff));
+    startDate = dateObjToStr2(startDate);
+    label = "Semana de "+startDate.slice(8,10)+"/"+startDate.slice(5,7);
+  } else if(period === "month"){
+    startDate = now.getFullYear()+"-"+String(now.getMonth()+1).padStart(2,"0")+"-01";
+    label = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"][now.getMonth()]+" "+now.getFullYear();
+  } else {
+    startDate = "2000-01-01";
+    label = "Histórico completo";
+  }
+
+  document.getElementById("stats-period-label").textContent = label;
+
+  // Filter dates in period
+  const dates = Object.keys(sessions).filter(d => d >= startDate).sort();
+
+  // Count sessions and workout types per athlete
+  const athStats = {};
+  dates.forEach(d => {
+    Object.entries(sessions[d]||{}).forEach(([name, workouts]) => {
+      if(!workouts.length) return;
+      if(!athStats[name]) athStats[name] = {sessions:0, workouts:{}};
+      athStats[name].sessions++;
+      workouts.forEach(w => {
+        athStats[name].workouts[w] = (athStats[name].workouts[w]||0)+1;
+      });
+    });
+  });
+
+  // Sort by sessions desc
+  const sorted = Object.entries(athStats).sort((a,b)=>b[1].sessions-a[1].sessions);
+  const sc = document.getElementById("stats-content");
+  sc.innerHTML = "";
+
+  if(!sorted.length){
+    sc.innerHTML='<div style="text-align:center;padding:40px 0;color:#333;font-size:13px">Sem dados para este período.</div>';
+    return;
+  }
+
+  sorted.forEach(([name, data]) => {
+    const topWorkouts = Object.entries(data.workouts).sort((a,b)=>b[1]-a[1]).slice(0,5);
+    const maxW = topWorkouts[0]?.[1]||1;
+    const bars = topWorkouts.map(([wkey,cnt]) => {
+      const wt = WORKOUT_TYPES.find(t=>t.key===wkey);
+      const label = wt?wt.short:wkey.toUpperCase();
+      const pct = Math.round((cnt/maxW)*100);
+      return `<div class="stat-bar-row">
+        <span class="stat-bar-label">${label}</span>
+        <div class="stat-bar-wrap"><div class="stat-bar-fill" style="width:${pct}%"></div></div>
+        <span class="stat-bar-val">${cnt}</span>
+      </div>`;
+    }).join("");
+
+    const card = document.createElement("div");
+    card.className = "stat-card";
+    const initials = getInitials(name);
+    card.innerHTML = `
+      <div class="stat-name">
+        <div class="ath-list-av" style="width:28px;height:28px;font-size:9px">${initials}</div>
+        ${name}
+        <span class="stat-count">${data.sessions} sessão${data.sessions!==1?"s":""}</span>
+      </div>
+      ${bars||'<div style="font-size:11px;color:var(--muted)">Sem tipos de treino registados</div>'}
+    `;
+    sc.appendChild(card);
+  });
+}
+
+function dateObjToStr2(d){
+  return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+}
 function setView(v){
   document.querySelectorAll(".view").forEach(el=>el.classList.remove("active"));
   document.querySelectorAll(".nav-btn").forEach(el=>el.classList.remove("active"));
   document.getElementById("view-"+v).classList.add("active");
-  document.querySelectorAll(".nav-btn")[["today","history","athletes"].indexOf(v)].classList.add("active");
+  document.querySelectorAll(".nav-btn")[["today","history","athletes","stats"].indexOf(v)].classList.add("active");
   if(v==="history") renderHistory();
   else if(v==="athletes") renderAthletesList();
+  else if(v==="stats") renderStats();
   else renderToday();
 }
 
@@ -488,8 +603,20 @@ function onDateChange(){
   renderToday();
 }
 
-updateMeta();
-renderToday();
+// ── INIT ──
+async function init(){
+  updateMeta();
+  renderToday();
+  // Load sessions from Supabase on startup
+  try {
+    await syncFromDB();
+  } catch(e){
+    console.warn("Initial sync failed:",e);
+  }
+  document.getElementById("loading").style.display="none";
+}
+
+init();
 </script>
 </body>
 </html>
